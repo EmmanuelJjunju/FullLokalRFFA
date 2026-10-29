@@ -56,3 +56,5 @@ Suggests:
 VignetteBuilder: quarto
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
+URL: https://github.com/EmmanuelJjunju/FullLokalRFFA
+BugReports: https://github.com/EmmanuelJjunju/FullLokalRFFA/issues
