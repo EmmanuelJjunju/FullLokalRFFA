@@ -156,7 +156,7 @@ pkgdown::build_article("FullLokalRFFA")
 # =====================================================================
 # Stage and commit your files locally (Run every time you make changes you want to save)
 gert::git_add(".")
-gert::git_commit("Describe your changes here (e.g., updated Sildre import function)")
+gert::git_commit("")
 
 # Push to GitHub: 
 # (Run after committing whenever you want to update your online repo and 
