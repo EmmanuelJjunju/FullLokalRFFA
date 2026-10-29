@@ -162,6 +162,14 @@ gert::git_commit("")
 # (Run after committing whenever you want to update your online repo and 
 # trigger automated checks/website updates via GitHub Actions)
 # gert::git_push()
+# 
+
+# =====================================================================
+# 4. Create the README File
+# =====================================================================
+# Run this in your R console while inside your package project:
+#usethis::use_readme_rmd() #once then edit as needed
+
 ```
 
 
