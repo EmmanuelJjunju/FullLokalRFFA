@@ -1,0 +1,12 @@
+inst/doc
+**/.quarto/
+^inst/testdata$
+^tests/testthat/testdata$
+/doc/
+/Meta/
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto

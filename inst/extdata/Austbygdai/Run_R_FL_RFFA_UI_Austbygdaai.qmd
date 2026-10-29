@@ -1,0 +1,718 @@
+---
+title: "Austbygdåi"
+author: "Emmanuel Jjunju"
+format:
+  html:
+    embed-resources: true
+    page-layout: full
+    toc: true
+    number-sections: true
+    code-tools: true
+    code-fold: true
+    format-links: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Innledning
+
+Trond Reitan (NVE) har utviklet R‑skripter som gjør det mulig å kjøre
+**Full Lokal + Regional Analyse** direkte i R.\
+Skriptene er nyttige både når man ikke har tilgang til NVEs
+flomanalyseprogram\
+(https://www.nve.no/media/16334/flood_analysis.pdf), og når man ønsker å
+jobbe i R og eventuelt i en notatbok.
+
+## Kjerneskripter for full lokal og regional analyse
+
+Hovedlogikken for analysen ligger i følgende skripter:
+
+- **`mcmc.R`**\
+  Kjører en Bayesiansk MCMC‑algoritme som tester mange mulige
+  parameterverdier, beholder de som passer best, og bruker resultatene
+  til å sammenligne modeller.
+
+- **`full_local_regional.R`**\
+  Forutsetter at `mcmc.R` allerede er kjørt. Skriptet innedolder
+  funskjoner som leser inn klima- og flomdata, estimerer GEV‑parametere
+  ved hjelp av regionale klimarelasjoner og Bayesiansk MCMC, og beregner
+  samt plotter flomstørrelser og usikkerhet (returverdier).
+
+- Prior og likelihood er definert i disse filene.
+
+## Enkelt eksempel
+
+Følgende funksjonalitet er inkludert i `example_full_local_regional.R`:
+
+- Kvantil‑tabell\
+- Plotting av flomkurve\
+- Plotting av MCMC‑sampler (for spesielt interesserte)
+
+## Formålet med dette notatet
+
+Dette notatet viser et tilpasset eksempel på hvordan skriptene brukes
+for **én stasjon**.\
+Notatet gir også mulighet til å sammenligne resultatene med beregninger
+gjort i flomanalyseprogrammet i Hydra2.
+
+Notatet er laget av Emmanuel Jjunju (NVE). I tillegg til skriptene fra
+Trond Reitan er det lagt til egne R‑funksjoner (`custom_functions.r`)
+for blant annet dataimport (fra Sildre m.m.) og plotting. Alle skriptene
+er brukt av Emmanuel Jjunju til å lage en r pakker som het rffafl (RFFA
+Full lokal).
+
+## Merk
+
+Full lokal + RFFA‑2018 er ikke utviklet for findata. Derfor må
+flomfrekvensanalyse på findata gjøres som **lokal flomfrekvensanalyse**.
+
+Hvis du har 10–25 år med findata for feltstørrelse \> 60 km², antar vi
+at du også har en lengre tidsserie med døgndata.\
+I slike tilfeller anbefaler vi at du bruker døgndataene i analysene.
+
+Hvis du har like lange tidsserier for døgn- og findata, bør du
+gjennomføre flomfrekvensanalyse på begge og deretter vurdere hvilke
+estimater som fremstår mest sannsynlige.
+
+# Pakker og r-skripter
+
+::: {style="
+  padding:12px;
+  background:#ddead1;
+  border-left:5px solid #4b6043;
+  border-radius:4px;
+  font-family:Arial, sans-serif;
+"}
+<strong style="color:#4b6043; font-size:14px;"> ✅ Enter paths to your R
+Scripts </strong>
+
+<p style="margin:6px 0 0 0; font-size:13px; color:#444;">
+
+station.dir\<-"REPLACE HERE"
+
+</p>
+:::
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+path.to.rscripts<-"N:/EJJ/R_FFA_FullLokal_RegionalAnalyse/01_R_Scripts"
+```
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# Kjerneskripter fra Trond reitan
+source(file = paste0(path.to.rscripts,"/","mcmc.R")) # # Get MCMC motor
+source(file = paste0(path.to.rscripts,"/","full_local_regional.r"))
+# custom functions (Emmanuel Jjunju)
+# #tilpaset funskosner for plotting osv ,også laster opp andre nødvendinge pakker
+source(file = paste0(path.to.rscripts,"/","custom_functions.r") )
+
+#options
+options(repr.plot.width = 12, repr.plot.height = 5) #set figure heights and widths
+options( #Set global widget size for the whole notebook
+    htmlwidgets.defaultWidth = "1200px",
+    htmlwidgets.defaultHeight = "1200px"
+)
+#colors
+xolr_palette <- c(  "red",  "blue",  "green",  "orange",  "purple",  "yellow",  "brown",  "black",  "cyan",  "magenta")
+```
+
+# Mapper
+
+## Hovedmappe
+
+i hoved mappen finnes følgende nødvendinge filer og mapper
+
+1.  **Dette Notatet `Run_R_FL_RFFA.ipynb` som entry point to analysen**
+
+2.  **`01_R_Scripts` mappe inneholder skripter som er nevnt tidligere**
+
+    - `mcmc.R`
+    - `full_local_regional.r`
+    - `example_full_local_regional.R` : eksepel for en enkel kjøring
+      (brukt som veiledning)
+    - `custom_functions.r`
+
+3.  **`02_Beregninger`**
+
+    - Lagre *Stasjonsmapper* in denne mappen
+    - Mappen `02_Beregninger` kan inneholde mange `Stasjonsmmapper` men
+      `Stajonsmmape` med stien i `path_to_station_folder.csv`
+
+## Stasjonsmappe (station.dir)
+
+1.  Stasjonsmappe bør inneholde input‑filene for én stasjon.\*\*
+2.  **Filene kan plasseres i intuitivt navngitte mapper som gjenspeiler
+    kilde og innhold.**
+    - AMS (årsmaksimal) : inneholder filer med årsmaksimal
+    - FLOMANALYSE : inneholder csv filer eksportert fra
+      hydra2/Flomanalyse
+    - NEVINA : inneholder filer eksporert fra NEVINA (viktihste filen er
+      shapefil med felt og klimaparametre)
+    - SILDRE : Inneholder filer eksportert fra Sildre
+3.  **De nødvendige filstiene er spesifisert i en CSV‑fil
+    (`file.paths.csv`) som må ligge i `Stasjonsmappe`.**
+    - Redigere denne med stiene til filene for ditt prosjekt. bruk en ny
+      mappe for hver stasjon.
+    - Stiene i `file.paths.csv` skal være relative til`Stasjonsmappe`.
+      Se eksempel i `02_Beregninger/Austbygdåi/file.paths.csv`.
+    - Obs!! Skripten legger til stien til `Stasjonsmappe` feks hvis man
+      skriver stien
+      `Sildre/16.128.0-Vannføring-time-v1.csv så vil skripten` , det
+      endres til
+      `N:/EJJ/R_FFA_FullLokal_RegionalAnalyse/02_Beregninger/Austbygdåi/Sildre/16.128.0-Vannføring-time-v1.csv`
+      hvis `Stasjonsmappe` er
+      `N:/EJJ/R_FFA_FullLokal_RegionalAnalyse/02_Beregninger/Austbygdåi`
+4.  **Sett stien til `Stasjonsmappe`.**
+    - Med `Stasjonsmappe` menes mappen som inneholder filer for
+      en-stasjon som skal analyseres
+    - `Stasjonsmappe` må lagres i mappen `02_Beregninger`.
+    - Vi analyserer én stasjon om gangen. Vi lager derfor en egen
+      prosjektmappe for hver stasjon under mappen `02_Bergninger`.
+    - Angi stien til din `Stasjonsmappe` manuelt ved å redigere nedenfor
+
+# User Input (Paths and location info)
+
+## Manual Entry
+
+::: {style="
+  padding:12px;
+  background:#ddead1;
+  border-left:5px solid #4b6043;
+  border-radius:4px;
+  font-family:Arial, sans-serif;
+"}
+<strong style="color:#4b6043; font-size:14px;"> ✅ Enter path to your
+station folder (Stasjonsmappe) </strong>
+
+<p style="margin:6px 0 0 0; font-size:13px; color:#444;">
+
+station.dir\<-"REPLACE HERE"
+
+</p>
+
+<strong style="margin:6px 0 0 0; font-size:13px; color:#444;">
+Optionally provide station_longitude and station_latitude (default is
+NULL) </strong>
+
+<p style="margin:6px 0 0 0; font-size:13px; color:#444;">
+
+station_lon\<-REPLACE HERE
+
+</p>
+
+<p style="margin:6px 0 0 0; font-size:13px; color:#444;">
+
+station_lat\<-REPLACE HERE
+
+</p>
+:::
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+#enter here
+station.dir<-"N:/EJJ/R_FFA_FullLokal_RegionalAnalyse/02_Beregninger/Austbygdåi" #Stasjonsmappe
+station_lon<-8.828
+station_lat<-59.995
+```
+
+## Process user input
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+station_name<-unlist(strsplit(station.dir,"\\/"))
+print(station_name<-station_name[length(station_name)])
+print(station.dir)
+```
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+file.paths<-paste0(station.dir,"/file.paths.csv")
+print(file.paths)
+DT::datatable(t(data.frame(station.dir,file.paths)))
+```
+
+```{r}
+#| editable: true
+#| scrolled: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# Read input.paths.csv file
+input.paths<-read.csv(file.paths)
+input.paths$path<-paste0(station.dir,"/",input.paths$path)
+DT::datatable(
+  input.paths,
+  caption = "Scenarios",
+  options = list(
+    dom = "tp",
+    autoWidth = TRUE  )
+) %>%
+  htmlwidgets::onRender(
+    sprintf("function(el,x){$('table.dataTable').css('font-size','%spx');}", 12)
+  )
+n<-nrow(input.paths)
+eval(parse(text=paste(input.paths$var,"<-input.paths$path[",1:n,"]")))
+```
+
+## Computation scenarios
+
+- one sildre data sereies for døgnverdier
+- Several `klimafile`scenarions i.e 1961-990 and 1991-2020
+- one sildre data sereies for timesverdier
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+#dognverdier
+#-------------------------------------------------------------------------------------------
+ams.dogn.file.list<-list(ams.sildre.Qdogn.long =ams.sildre.Qdogn.long)
+#kulminasjons
+#-------------------------------------------------------------------------------------------
+ams.mom.file.list<-list(ams.sildre.Qmom.short= ams.sildre.Qmom.short) # not used in FFA + lokal
+# Klimafile
+#-------------------------------------------------------------------------------------------
+klima.file.list<-list(params6190=params6190,params9120 =params9120)
+
+# Create Scenarios form all combinations
+#-------------------------------------------------------------------------------------------
+scenarios.df <- expand.grid(
+  ams   = names(ams.dogn.file.list),
+  klima = names(klima.file.list),
+  stringsAsFactors = FALSE
+)
+
+# Add file paths
+#-------------------------------------------------------------------------------------------
+scenarios.df$ams_path   <- unlist(ams.dogn.file.list[scenarios.df$ams])
+scenarios.df$klima_path <- unlist(klima.file.list[scenarios.df$klima])
+
+# Add new.reg.coef column
+#-------------------------------------------------------------------------------------------
+scenarios.df$new.reg.coef <- scenarios.df$klima != "params6190"
+
+#add auto scenario name
+#-------------------------------------------------------------------------------------------
+scenarios.df<-scenarios.df[order(scenarios.df$ams),]
+scenario<-paste0(scenarios.df$ams,"_",scenarios.df$klima)
+scenarios.df<-cbind(scenario,scenarios.df[,-c(1:2)])
+
+# Show scenarios table
+#-------------------------------------------------------------------------------------------
+scenarios.df<-scenarios.df[order(scenarios.df$ams),]
+fx.compact_dt( scenarios.df, caption = "Scenarios", fontsize = 12 )
+```
+
+# AMS (Sildre timesverdier)
+
+- Inneholder én AMS (årsmaksimal) av tidsserier per linje.
+
+## Sildre (timesverdier) =\> ams.\[qdøgn & qmom\]
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+ams2<-fx.sildre.timeseries.to.ams (file=sildre.timesverdier.txt, 
+                                   sep = ";",
+                                   ams.qdogn.txt=ams.sildre.Qdogn.short,
+                                   ams.qmom.txt=ams.sildre.Qmom.short,
+                                   plot = TRUE,
+                                   title="Sildre.timesverdier",
+                                   fontsize=12,
+                                   start_year=NULL,
+                                   end_year=2025
+                                  )
+#Qdøgn
+#ams2$daily_mean$DT
+ams2$daily_mean$plot
+```
+
+```{r}
+#| editable: true
+#| scrolled: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# Qmom  
+#ams2$daily_max$DT
+ams2$daily_max$plot
+```
+
+## Sildre (Forholdstall = Qmom / Qdøgn)
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# forholdstall = Qmom / Qdøgn
+forholdstall <- round(ams2$daily_max$ams$value / ams2$daily_mean$ams$value, 2)
+# Clean summary
+s <- summary(forholdstall)
+sm <- data.frame(
+  stat  = c("Min", "Median", "Mean", "Max"),
+  value = round(c(s["Min."], s["Median"],s["Mean"],s["Max."]  ), 2))
+# ---- MAIN PLOT ----
+par(mar = c(5,5,4,2),mfrow=c(1,2))
+boxplot(forholdstall, ylab =expression(Q[mom] / Q[døgn]))
+plot(density(forholdstall),main="",xlab = expression(Q[mom] / Q[døgn]));grid()
+txt<-paste(apply(sm,1,function(x) paste(x,collapse="=")))                           
+legend("bottom", txt,bty="n",cex=1.2);    box(which  ="outer")
+```
+
+## Sildre (døgnverdier) =\> ams.qdøgn (usually longer)
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+ams3<-fx.sildre.timeseries.to.ams (file=sildre.døgnverdier.txt, sep = ";",
+                                   ams.qdogn.txt =ams.sildre.Qdogn.long,
+                                   ams.qmom.txt=NA,
+                                   plot = TRUE,
+                                   title="Sildre.døgnverdier",
+                                   fontsize=12,
+                                   start_year=NULL,
+                                   end_year=2025)
+#ams3$daily_mean$DT
+ams3$daily_mean$plot
+```
+
+# Klimavariabel-fil
+
+- Eksempel: `farstad_clim.csv`
+- Inneholder flere klima- og feltvariabler.
+  - area.km2
+  - avr.specific.discharge
+  - eff.lake.perc
+  - river.length.main.km
+  - temp.feb.celcius
+  - temp.mar.celcius
+  - precip.melt.may
+  - glacier.perc
+  - forest.perc
+  - hypso.height.10perc
+  - precipitation.july
+  - sum.precip.melt.june
+  - total.river.length.without.lakes.all.km
+- Verdier kan hentes fra:
+  - NEVINA\
+  - Hydra2-databasen\
+  - FLOM_ANALYSE → *Editer regionale feltvariabler* (for å inspisere
+    tallene)
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# read from shp downlaoded from NEVINA
+print(station_name)
+prm <- fx.extract.klima.from.shp(
+    shpfile = nevina.shp,
+    params6190 = params6190,
+    params9120 = params9120,
+    plot.map = TRUE,
+    map.width="1000px",
+    map.height="500px",
+    station_name=station_name,
+    station_lon=station_lon,
+    station_lat =station_lat
+)
+prm$map
+```
+
+# Run FFA (Fulllokal + Regional - AMS døgnverdier)
+
+## Helper fnction to call `perform.analysis` for several scenarios
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+# print(scenarios.df)
+ run.FullLokalRFFA.scenarios <- function(scenarios.df,plot.curve=FALSE) {
+     options(repr.plot.width = 12, repr.plot.height = 7) #set figure heights and widths
+  out <- list()
+  for (i in seq_len(nrow(scenarios.df))) {
+      sc <- scenarios.df[i, ]
+      print("-----------------------------------------------------------------------------------------------------------------")
+      print(paste("Scenario",i))
+      print(paste0(names(sc)," = ",sc[])) #SCENARIO 
+      #TROND's function called here
+      res <- perform.analysis(
+          sc$ams_path, #AMSFILE
+          sc$klima_path, #KLIMAFILE
+          new.reg.coef = sc$new.reg.coef
+      )
+      
+      #str(res)
+      tbl <- quantile.summary(
+          c(0,2,5,10,20,50,100,200,500,1000),
+          res
+      )
+      #print(tbl)
+      tbl <- as.data.frame(lapply(tbl, function(x)
+          if (is.numeric(x)) round(x, 2) else x))
+              tbl$Relative<-round(tbl$Post.mean/tbl$Post.mean[1],3)
+      # Format numeric columns
+      tbl[, -1] <- apply(tbl[, -1], 2, function(x) sprintf("%.3f", as.numeric(x)))
+      tbl[, 2:3] <- apply(tbl[, 2:3], 2, function(x) sprintf("%.1f", as.numeric(x)))
+    
+     #output res and quantile table
+     out[[sc$scenario]] <- list(
+              table = tbl,
+              analysis = res
+          )
+    #plot.res.mcmc(res,main=scenarios.df$scenario[i])
+    if(plot.curve){#plot curves if only 2 scenarios
+     if(i==1){
+         plot.quantile.curve.base(analysis = res,add = FALSE, show.pp.uncertainty = TRUE,label =scenarios.df$scenario[i] )
+     } else {
+         plot.quantile.curve.base(analysis = res,add = TRUE, show.pp.uncertainty = TRUE,label =scenarios.df$scenario[i])
+         }
+        }
+    
+  }
+  out
+}
+```
+
+## Run all scenarios (based on Sildre data)
+
+::: {style="
+  padding:12px;
+  background:#fdeaea;
+  border-left:5px solid #d9534f;
+  border-radius:4px;
+  font-family:Arial, sans-serif;
+"}
+<strong style="color:#d9524f; font-size:14px;">⚠️ If an Error Occurs
+(Usually on first run)</strong>
+
+<p style="margin:6px 0 0 0; font-size:13px; color:#444;">
+
+"Error in if (mu + exp(ls)/k \* ((log(2)\^(-k) - 1)) \<= 0)
+return(-1e+200): missing value where TRUE/FALSE needed"
+
+</p>
+
+<strong style="margin:6px 0 0 0; font-size:13px; color:#444;"> I Simply
+rerun the function — it will eventually complete successfully. (consult
+Trond Reitan) </strong>
+:::
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+#results <- run.FullLokalRFFA.scenarios(scenarios.df) # 
+# sometmes fails so thisisnmy workaround
+results <- NULL
+max_attempts <- 10
+attempt <- 1
+
+repeat {
+  results <- tryCatch({
+    run.FullLokalRFFA.scenarios(scenarios.df) # Your function
+  }, error = function(e) {
+    message(paste("Attempt", attempt, "failed:", e$message))
+    return(NULL) # Return NULL to signal failure to the loop
+  })
+  
+  if (!is.null(results)) {
+    message("FFA run successfully!")
+    break # Success, break the loop
+  }
+  
+  attempt <- attempt + 1
+  if (attempt > max_attempts) {
+    stop("Maximum attempts reached. Function still failing.")
+  }
+  Sys.sleep(2) # Optional: Wait 2 seconds before retrying
+}
+
+#str(results,3)
+analyses<-lapply(results,function(x) x$analysis)  
+#str(analyses,3)  
+```
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+#plot quantile tables from the ananlysis
+lapply(names(results), function(x) fx.compact_dt(results[[x]]$table,caption = x,fontsize = 12) )
+```
+
+```{r}
+#| editable: true
+#| scrolled: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+plot.quantile.curves.gg(analyses,labels = names(analyses),show.pp.uncertainty = TRUE)
+```
+
+## Optional: import of hydra2/Flomanalyse results (for comparison)
+
+```{r}
+#| editable: true
+#| jupyter: {source_hidden: true}
+#| slideshow: {slide_type: ''}
+#| tags: []
+if(file.exists(flomanalyse.quantiles.6190)){
+    d<-fx.read.hydra.quantiles(flomanalyse.quantiles.6190)
+    fx.compact_dt(d,caption = "Quantiles from Flomanalyse/hydra2",fontsize = 12)
+}  else {
+    message(paste("hydra2 flomanalyse quantiles file\n[",
+                  flomanalyse.quantiles.6190,
+                  "]\nDoesnt exist. \nDo an analysis in hydra2 if you want to compare"))
+}             
+```
+
+## Optional: Update scenario list and results list to add Flomanalyse result
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+if(file.exists(flomanalyse.quantiles.6190)){
+    results$flomanalyse<-list(table=d,
+                          analysis = list(ams=results$ams.hydra_params6190$ams))
+#print(str(results,3))
+#print(results$analysis$ams)
+scenarios.df2<-rbind(scenarios.df,
+                    data.frame(scenario = "flomanalyse",ams_path=NA, klima_path=NA,new.reg.coef=FALSE)
+                    )
+} else{
+  scenarios.df2<-scenarios.df  
+}
+scenarios.df2<-scenarios.df2[,c(1,4)]
+fx.compact_dt(scenarios.df2,caption = "Updated Scenarios (incl Quantiles from Flomanalyse/hydra2)",fontsize = 12)
+```
+
+## Compare
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+print(scenarios.df2)
+#step 1 — Assign a unique color to each scenario
+#my_colors <-RColorBrewer::brewer.pal(nrow(scenarios.df2), "Set3"),
+my_colors <- xolr_palette[1:nrow(scenarios.df2)]
+scenario_colors <- setNames(
+  scales::alpha(my_colors, 0.1),
+  scenarios.df2$scenario
+)
+print(scenario_colors)
+#Build your scenario pairs
+#pairs <- combn(seq_len(nrow(scenarios.df2)), 2, simplify = FALSE)
+pairs<- list(c(1,2),c(1,3))
+#loop
+out.widgets <- lapply(pairs, function(p) {
+
+  scA <- scenarios.df2$scenario[p[1]]
+  scB <- scenarios.df2$scenario[p[2]]
+
+   widget<-compare.two.quantile.tables.sidebyside (
+    scenarioA = scA,
+    scenarioB = scB,
+    scenarios.df = scenarios.df2,
+    results = results,
+    bgA = scenario_colors[scA],
+    bgB = scenario_colors[scB]
+  )
+    # Wrap widget with spacing 
+    htmltools::div(style="margin-bottom: 40px;", widget)
+})
+
+# Display all results
+#htmltools::tagList(out[[1]]);htmltools::tagList(out[[2]])
+do.call(htmltools::tagList, out.widgets)
+```
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: []
+options(repr.plot.width = 12, repr.plot.height = 10) #set figure heights and widths
+cols <- setNames( my_colors , names(results) ) 
+fx.compare.all.quantile.tables.by.plot(results, colors = cols)
+```
+
+# Save a qmd file for Use in RStudio
+
+::: {style="
+  padding:12px;
+  background:#fdeaea;
+  border-left:5px solid #d9534f;
+  border-radius:4px;
+  font-family:Arial, sans-serif;
+"}
+<strong style="color:#d9524f; font-size:14px;">⚠️ Delete next chunk
+before rendring the QMD</strong>
+:::
+
+```{r}
+#| editable: true
+#| slideshow: {slide_type: ''}
+#| tags: [remove-cell]
+# 1. Get the current notebook name
+full_path <- Sys.getenv("JPY_SESSION_NAME")
+notebook_name <- basename(full_path)
+
+# 2. Convert .ipynb → .qmd (output is ALWAYS notebook_name with .qmd)
+system(paste("quarto convert", shQuote(notebook_name)))
+
+# 3. The file that now exists:
+qmd_original <- sub("\\.ipynb$", ".qmd", notebook_name)
+
+# 4. Define the new name and destination
+qmd_new_name <- sub("\\.qmd$", paste0("_", station_name, ".qmd"), qmd_original)
+qmd_new_path <- file.path(station.dir, qmd_new_name)
+
+# 5. Move + rename
+file.rename(qmd_original, qmd_new_path)
+
+# 6. Read the converted QMD
+lines <- readLines(qmd_new_path, warn = FALSE)
+
+# 7. Remove the auto-generated YAML
+yaml_start <- which(lines == "---")[1]
+yaml_end   <- which(lines == "---")[2]
+body <- lines[(yaml_end + 1):length(lines)]
+
+# 8. Insert your desired YAML (dynamic title)
+yaml <- c(
+  "---",
+  paste0('title: "', station_name, '"'),
+  #paste0('subtitle: "', project.subtitle, '"'),
+  paste0('author: "', "Emmanuel Jjunju", '"'),
+  "format:",
+  "  html:",
+  "    embed-resources: true",
+  "    page-layout: full",
+  "    toc: true",
+  "    number-sections: true",
+  "    code-tools: true",
+  "    code-fold: true",
+  "    format-links: true",
+  "---",
+  ""
+)
+
+# 9. Write the updated file
+writeLines(c(yaml, body), qmd_new_path)
+
+message("QMD saved to: ", qmd_new_path)
+```

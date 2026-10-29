@@ -1,0 +1,21 @@
+6.10.0.1001.1 (Vannføring) Gryta Gjennomsnitt 12.10.1967 12:00-01.01.2026 23:00 HYKVAL 1 time
+
+Gjennomsnittelig maksimalverdi (middelflom):    2.338
+
+GEV (L-moment): f(x)=1/s (1.0+(ksi(x-mu)/s)^(-1/ksi-1) exp(-(1.0+(ksi(x-mu)/s))^(-1/ksi))  mu=1.69    s=0.847   ksi=0.162 
+Maksimums-kvantiler:
+--------------
+Gjentaks-     Måle-        Relative
+intervall     verdier      måle-
+  (år)                     verdier
+---------------------------------------------
+
+   2         2.01          0.859
+   5         3.13          1.338
+  10         3.99          1.707
+  20         4.92          2.105
+  50         6.30          2.695
+ 100         7.48          3.200
+ 200         8.80          3.763
+ 500        10.78          4.610
+1000        12.48          5.339

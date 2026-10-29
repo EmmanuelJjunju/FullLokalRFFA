@@ -1,0 +1,30 @@
+16.128.0 VF HYFIN_COMPLETED(ekte&virt.isred.) Timesdata Valgte år: 1985-2025 (årsavgrensning:ingen) tolerans=10.0%
+
+Gjennomsnittelig maksimalverdi (middelflom) :  100.198
+Median maksimalverdi (indeksflom for døgndata) :  105.491
+------------------------------------------
+
+GEV (Bayesiansk): f(x)=1/s (1.0+(ksi(x-mu)/s)^(-1/ksi-1) exp(-(1.0+(ksi(x-mu)/s))^(-1/ksi))  mu=89.2   +-5.8    s=25.1   +-4.5    ksi=-0.104 +-0.21 
+Maksimums-kvantiler:
+--------------
+Gjentaks-     Måle-        Relative  Nedre  Øvre
+intervall     verdier      måle-    estimat estimat
+  (år)                     verdier                   
+---------------------------------------------
+
+   2        98.14          0.979   86.34   110.72
+   5       123.68          1.234  109.42   147.48
+  10       139.59          1.393  120.13   176.14
+  20       156.85          1.565  126.30   206.95
+  50       183.21          1.828  130.81   255.34
+ 100       206.33          2.059  133.15   301.97
+ 200       232.92          2.325  134.42   357.82
+ 500       274.54          2.740  135.27   438.84
+1000       312.01          3.114  135.81   509.38
+------------------------------------------
+
+Relativ måleverdi = flomverdi / middelflom.
+Nedre/øvre estimat angir grensene for á posteriori 95% troverdighetsintervall
+Usikkerheten i parameterestimater er her angitt med '+/-' standardavvik (stdev). Under normal-fordelings-
+antagelser for á posteriori-fordelingen til hver parameter, betyr det at et 95% troverdighetsinervall kan lages med
+estimat+/-1.96*stdev som grenser.

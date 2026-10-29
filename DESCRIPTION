@@ -1,0 +1,58 @@
+Package: FullLokalRFFA
+Type: Package
+Title: Full Local and Regional Flood Frequency Analysis in R
+Version: 0.1.0
+Authors@R: c(
+    person("Emmanuel", "Jjunju", email = "your.email@nve.no", role = c("aut", "cre")),
+    person("Trond", "Reitan", role = "ctb")
+  )
+Description: Expands upon original R scripts developed by Trond Reitan (2025) 
+    for conducting Full Local and Regional Flood Frequency Analysis (RFFA), 
+    implementing the methodology described in NVE Report 10/2020 
+    <https://publikasjoner.nve.no/rapport/2020/rapport2020_10.pdf> by Engeland 
+    et al. (2020). Provides an alternative to NVE's Hydra2 flood analysis 
+    tool by combining Trond's core MCMC and regional analysis logic with 
+    custom supporting functions built by Emmanuel Jjunju (NVE) for streamlined 
+    data import (from Sildre, NEVINA shapefiles, etc.), processing, and plotting. 
+    Enables users to run Bayesian MCMC parameter estimation, Generalized Extreme 
+    Value (GEV) calculations, return-period plots, and quantile tables directly 
+    within R. Note that this method is designed for daily flood data (ideally 
+    catchments > 60 km² with 10–25+ years of records) and is not intended for 
+    instantaneous or hourly peak flow (findata) analysis. This package is 
+    provided as-is for research and supplementary use at the user's own risk; 
+    users should always refer to officially published NVE tools and guidelines 
+    for authoritative flood frequency analyses.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Config/roxygen2/version: 8.1.0
+Imports: 
+    coda,
+    MASS,
+    readxl,
+    reader,
+    dplyr, 
+    tidyr,
+    sf,
+    quarto,
+    RColorBrewer,
+    scales
+Suggests:
+    leaflet,
+    leafpop,
+    htmltools,
+    tibble,
+    DT,
+    ggplot2,
+    purrr,
+    leaflet.extras,
+    repr,
+    mapview,
+    leaflet.extras2,
+    plotly,
+    htmlwidgets,
+    leafem,
+    testthat (>= 3.0.0)
+VignetteBuilder: quarto
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3

@@ -1,0 +1,55 @@
+citHeader("To cite rffafl in publications use:")
+
+citEntry(
+  entry = "Manual",
+  title = "rffafl: Full Local + Regional Flood Frequency Analysis in R",
+  author = person("Emmanuel", "Jjunju"),
+  year = "2026",
+  note = "R package version 0.1.0, expanding on original scripts by Trond Reitan (2025)",
+  textVersion = paste(
+    "Jjunju, E. (2026).",
+    "rffafl: Full Local + Regional Flood Frequency Analysis in R.",
+    "R package version 0.1.0, expanding on R scripts by Trond Reitan (2025)."
+  )
+)
+
+citHeader("When citing the core scripts by Trond Reitan:")
+
+citEntry(
+  entry = "Manual",
+  title = "R scripts for Full Local + Regional Flood Frequency Analysis",
+  author = person("Trond", "Reitan"),
+  year = "2025",
+  institution = "Norges vassdrags- og energidirektorat (NVE)",
+  note = "Internal R scripts",
+  textVersion = paste(
+    "Reitan, T. (2025).",
+    "R scripts for Full Local + Regional Flood Frequency Analysis.",
+    "Norges vassdrags- og energidirektorat (NVE)."
+  )
+)
+
+citHeader("The underlying methodology is based on:")
+
+citEntry(
+  entry = "TechReport",
+  title = "Lokal og regional flomfrekvensanalyse",
+  author = c(
+    person("Kolbjørn", "Engeland"),
+    person("Per", "Glad"),
+    person("Byman Hikanyona", "Hamududu"),
+    person("Hong", "Li"),
+    person("Trond", "Reitan"),
+    person("Seija Maria", "Stenius")
+  ),
+  institution = "Norges vassdrags- og energidirektorat (NVE)",
+  type = "NVE Rapport",
+  number = "10/2020",
+  year = "2020",
+  url = "https://publikasjoner.nve.no/rapport/2020/rapport2020_10.pdf",
+  textVersion = paste(
+    "Engeland, K., Glad, P., Hamududu, B. H., Li, H., Reitan, T., & Stenius, S. M. (2020).",
+    "Lokal og regional flomfrekvensanalyse (NVE Rapport 10/2020).",
+    "Norges vassdrags- og energidirektorat."
+  )
+)

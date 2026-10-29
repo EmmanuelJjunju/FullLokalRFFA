@@ -1,0 +1,30 @@
+6.10.0 VF HYDAG Døgnmiddel Valgte år: 1968-2025 (årsavgrensning:ingen) tolerans=10.0%
+
+Gjennomsnittelig maksimalverdi (middelflom) :  1.62379
+Median maksimalverdi (indeksflom for døgndata) :  1.54353
+------------------------------------------
+
+GEV (Full lokal+regional): f(x)=1/s (1.0+(ksi(x-mu)/s)^(-1/ksi-1) exp(-(1.0+(ksi(x-mu)/s))^(-1/ksi))  mu=1.36   +-0.068  s=0.497  +-0.049  ksi=0.0166 +-0.038
+Maksimums-kvantiler:
+--------------
+Gjentaks-     Måle-        Relative  Nedre  Øvre
+intervall     verdier      måle-    estimat estimat
+  (år)                     verdier                   
+---------------------------------------------
+
+   2         1.54          0.948    1.40     1.71
+   5         2.12          1.303    1.90     2.39
+  10         2.51          1.544    2.23     2.85
+  20         2.89          1.779    2.54     3.32
+  50         3.40          2.092    2.91     3.97
+ 100         3.79          2.335    3.16     4.50
+ 200         4.20          2.585    3.42     5.05
+ 500         4.76          2.931    3.77     5.83
+1000         5.21          3.208    4.03     6.45
+------------------------------------------
+
+Relativ måleverdi = flomverdi / middelflom.
+Nedre/øvre estimat angir grensene for á posteriori 95% troverdighetsintervall
+Usikkerheten i parameterestimater er her angitt med '+/-' standardavvik (stdev). Under normal-fordelings-
+antagelser for á posteriori-fordelingen til hver parameter, betyr det at et 95% troverdighetsinervall kan lages med
+estimat+/-1.96*stdev som grenser.
