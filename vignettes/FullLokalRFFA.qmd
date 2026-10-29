@@ -124,35 +124,44 @@ pkgdown::build_article("FullLokalRFFA")
 ```
 
 
-# how to configre gitbub for the package
+# how to configure gitbub for the package and commit
 ```{r}
 #| eval: false
-# 1. Initialize Git repository locally (if not already done)
-usethis::use_git()
-
-# 2. Authentication (Run these two lines ONLY if you haven't set up a GitHub PAT token yet)
+# =====================================================================
+# 1. ONE-TIME SETUP PER MACHINE (Only if you haven't authenticated before)
+# =====================================================================
+# Run these ONLY once when setting up a new computer or if your GitHub token expires:
 # usethis::create_github_token()
 # gitcreds::gitcreds_set()
 
-# 3. Create the remote repository on GitHub and link/push your local package
-# 1. Stage and commit your files locally so you have an active branch
-gert::git_add(".")
-gert::git_commit("Initial commit for FullLokalRFFA")
 
-# 2. Now let usethis create the repository on GitHub and link/push everything
-usethis::use_github()
+# =====================================================================
+# 2. ONE-TIME SETUP PER PACKAGE (Run once when creating the project)
+# =====================================================================
+# Initialize Git locally (Run once per project)
+# usethis::use_git()
 
+# Create the remote repository on GitHub and link/push (Run once per package life)
+# usethis::use_github() 
 
-# 4. Add automated R-CMD-check GitHub Action (tests package on Windows, Mac, Linux on every push)
-usethis::use_github_action_check()
+# Add automated R-CMD-check GitHub Action (Run once per package life)
+# usethis::use_github_action("check-standard")
 
-# 5. Add automated Pkgdown website hosting (publishes your documentation to GitHub Pages)
-usethis::use_pkgdown_github_pages()
-
-# Host Your Website on GitHub Pages (Optional but Recommended)
+# Add automated Pkgdown website hosting (Run once per package life)
 # usethis::use_pkgdown_github_pages()
-# This creates a GitHub Action workflow file (.github/workflows/pkgdown.yaml).
-# Push your code to GitHub. Every time you push updates to main, GitHub will automatically run pkgdown::build_site() and host your site for free at:
+
+
+# =====================================================================
+# 3. ROUTINE DEVELOPMENT WORKFLOW (Run frequently as you write code)
+# =====================================================================
+# Stage and commit your files locally (Run every time you make changes you want to save)
+gert::git_add(".")
+gert::git_commit("Describe your changes here (e.g., updated Sildre import function)")
+
+# Push to GitHub: 
+# (Run after committing whenever you want to update your online repo and 
+# trigger automated checks/website updates via GitHub Actions)
+# gert::git_push()
 ```
 
 
